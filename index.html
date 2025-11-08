@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福加熱中 - 聖誕特調</title>
+    <style>
+        /* --- CSS 樣式 --- */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            
+            /* 使用深色木紋背景 
+              1. 將您的木紋圖命名為 'wood-bg.jpg'
+              2. (選用) 如果沒有圖，可以先用 #333 
+            */
+            background-image: url('wood-bg.jpg');
+            background-color: #333; /* 圖片載入失敗時的底色 */
+            background-size: cover;
+            background-attachment: fixed; /* 背景固定不動 */
+            color: #ffffff;
+        }
+
+        /* 標題和說明文字 (來自您的圖片) */
+        .header-text {
+            text-align: center;
+            max-width: 600px;
+            margin: 20px auto 40px auto;
+        }
+
+        .header-text h1 {
+            color: #FFD700; /* 金色 (模擬聖誕樹) */
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* 文字陰影 */
+        }
+
+        .header-text p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        /* 1. 圖片選項的網格容器 (3x3) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 10px; /* 上下 20px, 左右 10px 間距 */
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* 2. 單個選項的樣式 (包含圖片和標籤) */
+        .option-item {
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .option-item:hover {
+            transform: scale(1.05); /* 放大效果 */
+        }
+
+        .option-item img {
+            width: 100%;
+            max-width: 150px; /* 限制咖啡杯圖片大小 */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 3. 選項標籤 (粉色圓角) */
+        .option-item p {
+            background-color: #EAB4BE; /* 圖片中的粉色 */
+            color: #333; /* 標籤文字用深色 */
+            border-radius: 20px; /* 圓角 */
+            padding: 8px 15px;
+            margin: 10px auto 0 auto;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: inline-block; /* 讓背景色只包住文字 */
+        }
+
+        /* --- 4. 彈窗樣式 (Modal) --- */
+        .modal-overlay {
+            display: none; /* 預設隱藏 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-popup {
+            display: none; /* 預設隱藏 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1001;
+        }
+
+        .modal-popup img {
+            max-width: 80vw; /* 圖片最大寬度為視窗的 80% */
+            max-height: 80vh; /* 圖片最大高度為視窗的 80% */
+            display: block;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            /* --- (!!!) 新增這一行 !!! --- */
+            color: #333; /* 讓 X 符號顯示為深灰色 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-text">
+        <h1>✨ 幸福加熱中 聖誕特調 ✨</h1>
+        <p>
+            右昌教會歡迎您～<br>
+            一起來一杯「幸福加熱中-聖誕特調」<br>
+            點選想喝的飲品就會跳出祝福的經文
+        </p>
+    </div>
+
+    <div class="options-grid" id="optionsGrid">
+        
+        <div class="option-item" data-target="黑咖啡.png">
+            <img src="coffee-cup.jpg" alt="黑咖啡">
+            <p>黑咖啡</p>
+        </div>
+        <div class="option-item" data-target="阿華田.png">
+            <img src="coffee-cup.jpg" alt="阿華田">
+            <p>阿華田</p>
+        </div>
+        <div class="option-item" data-target="果汁系列.png">
+            <img src="coffee-cup.jpg" alt="果汁系列">
+            <p>果汁系列</p>
+        </div>
+        <div class="option-item" data-target="咖啡系列.png">
+            <img src="coffee-cup.jpg" alt="咖啡系列">
+            <p>咖啡系列</p>
+        </div>
+        <div class="option-item" data-target="無糖茶系列.png">
+            <img src="coffee-cup.jpg" alt="無糖茶系列">
+            <p>無糖茶系列</p>
+        </div>
+        <div class="option-item" data-target="奶茶系列.png">
+            <img src="coffee-cup.jpg" alt="奶茶系列">
+            <p>奶茶系列</p>
+        </div>
+        <div class="option-item" data-target="氣泡系列.png">
+            <img src="coffee-cup.jpg" alt="氣泡系列">
+            <p>氣泡系列</p>
+        </div>
+        <div class="option-item" data-target="抹茶系列.png">
+            <img src="coffee-cup.jpg" alt="抹茶系列">
+            <p>抹茶系列</p>
+        </div>
+        <div class="option-item" data-target="季節限定.png">
+            <img src="coffee-cup.jpg" alt="季節限定">
+            <p>季節限定</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-popup" id="modalPopup">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <img src="" alt="祝福經文" id="modalImage">
+    </div>
+
+
+    <script>
+        // 1. 取得所有需要的元素
+        const optionItems = document.querySelectorAll('.option-item'); // (!!) 改成抓 .option-item
+        const overlay = document.getElementById('modalOverlay');
+        const popup = document.getElementById('modalPopup');
+        const closeButton = document.getElementById('modalClose');
+        const modalImage = document.getElementById('modalImage');
+
+        // 2. 為 "每一個" .option-item 加上點擊事件
+        optionItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // 取得 data-target 屬性中的圖片路徑
+                const imagePath = this.dataset.target;
+                
+                // 將路徑設定給彈窗中的 <img>
+                modalImage.src = imagePath;
+
+                // 顯示彈窗和遮罩
+                overlay.style.display = 'block';
+                popup.style.display = 'block';
+            });
+        });
+
+        // 3. 關閉彈窗的函數
+        function closeModal() {
+            overlay.style.display = 'none';
+            popup.style.display = 'none';
+            modalImage.src = ""; // 清空圖片路徑
+        }
+
+        // 4. 幫 "關閉按鈕" 和 "遮罩" 加上點擊事件
+        closeButton.addEventListener('click', closeModal);
+        overlay.addEventListener('click', closeModal);
+    </script>
+
+</body>
+</html>
